@@ -15,7 +15,6 @@ import logging
 import json
 import threading
 from collections import defaultdict
-
 import jwt
 from pwdlib import PasswordHash
 from pydantic import EmailStr
@@ -23,15 +22,17 @@ from pydantic import BaseModel, Field
 from typing import Literal, Optional, Set, Tuple
 import re
 import io
-
+import ssl
 from storage import get_storage
-
-
 from pypdf import PdfReader
-
-
 load_dotenv()
 def get_db_connection():
+    ca_pem = os.getenv("DB_SSL_CA", "").strip()
+    if ca_pem:
+        ssl_context = ssl.create_default_context(cadata=ca_pem)
+    else:
+        ca_path = os.path.join(os.path.dirname(__file__), "ca.pem")
+        ssl_context = ssl.create_default_context(cafile=ca_path)
     return pymysql.connect(
         host=os.getenv("DB_HOST", "localhost"),
         port=int(os.getenv("DB_PORT", "3306")),
@@ -42,7 +43,9 @@ def get_db_connection():
         connect_timeout=5,
         read_timeout=10,
         write_timeout=10,
+        ssl=ssl_context,
     )
+
 
 
 def check_table_exists(conn, table_name: str) -> bool:
