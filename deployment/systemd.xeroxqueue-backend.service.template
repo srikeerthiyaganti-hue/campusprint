@@ -1,0 +1,50 @@
+# =============================================================================
+# XeroxQueue Backend Systemd Service Template (Staging)
+#
+# Instructions:
+# 1. Copy this file to /etc/systemd/system/xeroxqueue-backend.service
+# 2. Update placeholders (<APP_DIR>, <USER>, <GROUP>, <WORKERS>)
+# 3. Reload systemd: systemctl daemon-reload
+# 4. Enable service: systemctl enable xeroxqueue-backend
+# 5. Start service: systemctl start xeroxqueue-backend
+# 6. Check status: systemctl status xeroxqueue-backend
+# =============================================================================
+
+[Unit]
+Description=XeroxQueue FastAPI Backend Service (Staging)
+After=network.target mysql.service
+Wants=mysql.service
+
+[Service]
+Type=simple
+User=<SERVICE_USER>
+Group=<SERVICE_GROUP>
+WorkingDirectory=<APP_ROOT>/backend
+EnvironmentFile=<APP_ROOT>/backend/.env
+
+# Run Uvicorn through the virtual environment python interpreter
+ExecStart=<APP_ROOT>/backend/.venv/bin/uvicorn main:app \
+    --host 127.0.0.1 \
+    --port 8000 \
+    --workers 2 \
+    --proxy-headers \
+    --forwarded-allow-ips 127.0.0.1 \
+    --timeout-keep-alive 30 \
+    --access-log
+
+# Restart configuration
+Restart=always
+RestartSec=5s
+
+# Process security hardening
+PrivateTmp=true
+ProtectSystem=full
+# If APP_ROOT is inside /home/<user>, change ProtectHome=true to ProtectHome=read-only or false
+ProtectHome=true
+NoNewPrivileges=true
+StandardOutput=journal
+StandardError=journal
+SyslogIdentifier=xeroxqueue-backend
+
+[Install]
+WantedBy=multi-user.target

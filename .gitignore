@@ -1,0 +1,28 @@
+node_modules/
+.env
+.venv/
+__pycache__/
+*.db
+private_uploads/
+# Uploaded student documents — never commit PDFs
+backend/uploads/
+uploads/
+
+# Frontend build output
+frontend/dist/
+
+# Logs and audit trails
+logs/
+backend/logs/
+*.log
+
+# macOS files
+.DS_Store
+# Local database backups and temporary code backups
+backups/
+*.backup-before-upload-security
+
+# Python cache and test artifacts
+.pytest_cache/
+.coverage
+htmlcov/

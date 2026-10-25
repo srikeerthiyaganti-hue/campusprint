@@ -1,0 +1,32 @@
+# =============================================================================
+# XeroxQueue Backend Runtime Dependencies
+# Python >= 3.10
+# Pinned to tested, compatible versions from the production validation environment
+# =============================================================================
+
+# Core ASGI Web Framework & Server
+fastapi==0.128.8
+uvicorn[standard]==0.39.0
+python-multipart==0.0.20
+
+# Data Validation & Serialization
+pydantic==2.13.5
+email-validator==2.3.0
+
+# Database Client
+PyMySQL==1.2.3
+
+# Environment Configuration
+python-dotenv==1.2.1
+
+# Cryptographic Authentication & Password Hashing
+PyJWT==2.15.1
+pwdlib[argon2]==0.2.1
+argon2-cffi==23.1.0
+
+# PDF Inspection & Validation
+pypdf==6.21.2
+
+# S3-Compatible Cloud Object Storage (Required only if STORAGE_BACKEND=s3, e.g. Cloudflare R2)
+boto3==1.37.9
+botocore==1.37.9
