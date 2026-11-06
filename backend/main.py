@@ -627,44 +627,79 @@ def get_orders(
 CANONICAL_FALLBACK_LOCATIONS = [
     {
         "id": None,
-        "location_code": "HOSTEL_A",
-        "name": "Boys Hostel Block A",
-        "description": "Ground floor reception / security desk",
-        "building_type": "hostel",
+        "location_code": "A_BLOCK",
+        "name": "A-block",
+        "description": "",
+        "building_type": "academic",
     },
     {
         "id": None,
-        "location_code": "HOSTEL_B",
-        "name": "Girls Hostel Block B",
-        "description": "Main gate security checkpoint",
-        "building_type": "hostel",
+        "location_code": "H_BLOCK",
+        "name": "H-Block",
+        "description": "",
+        "building_type": "academic",
     },
     {
         "id": None,
-        "location_code": "LIB_FOYER",
-        "name": "Central Library Foyer",
-        "description": "Library entrance turnstile lobby",
+        "location_code": "N_BLOCK",
+        "name": "N-Block",
+        "description": "",
+        "building_type": "academic",
+    },
+    {
+        "id": None,
+        "location_code": "U_BLOCK",
+        "name": "U-Block",
+        "description": "",
+        "building_type": "academic",
+    },
+    {
+        "id": None,
+        "location_code": "MHP",
+        "name": "MHP",
+        "description": "",
+        "building_type": "other",
+    },
+    {
+        "id": None,
+        "location_code": "PHARMACY_BLOCK",
+        "name": "Pharmacy Block",
+        "description": "",
+        "building_type": "academic",
+    },
+    {
+        "id": None,
+        "location_code": "LIBRARY",
+        "name": "Library",
+        "description": "",
         "building_type": "library",
     },
     {
         "id": None,
-        "location_code": "ACAD_BLOCK_1",
-        "name": "Academic Block 1",
-        "description": "Main entrance lobby, near stairs",
-        "building_type": "academic",
+        "location_code": "CONVOCATION_HALL",
+        "name": "Convocation hall",
+        "description": "",
+        "building_type": "other",
     },
     {
         "id": None,
-        "location_code": "MGMT_BLOCK",
-        "name": "Management Block",
-        "description": "Department reception counter",
-        "building_type": "academic",
+        "location_code": "GUEST_HOUSE",
+        "name": "Guest House",
+        "description": "",
+        "building_type": "other",
     },
     {
         "id": None,
-        "location_code": "CANTEEN",
-        "name": "Campus Food Court / Canteen",
-        "description": "Outdoor pickup table",
+        "location_code": "LARA_GATE",
+        "name": "LARA GATE",
+        "description": "",
+        "building_type": "other",
+    },
+    {
+        "id": None,
+        "location_code": "UNIVERSITY_GATE",
+        "name": "UNIVERSITY GATE",
+        "description": "",
         "building_type": "other",
     },
 ]
@@ -1109,12 +1144,20 @@ def create_order(
                         raw_loc_name = (order.delivery_location_name or "").strip()
                         matched = next((l for l in active_db_locations if l["name"].lower() == raw_loc_name.lower()), None)
                         if not matched:
-                            raise HTTPException(
-                                status_code=400,
-                                detail=f"Campus location '{raw_loc_name}' is not an active delivery hub. Please select a valid campus location.",
+                            matched_fallback = next(
+                                (f for f in CANONICAL_FALLBACK_LOCATIONS if f["name"].lower() == raw_loc_name.lower() or f["location_code"].lower() == raw_loc_name.lower()),
+                                None,
                             )
-                        delivery_location_id = matched["id"]
-                        delivery_location_name = matched["name"]
+                            if not matched_fallback:
+                                raise HTTPException(
+                                    status_code=400,
+                                    detail=f"Campus location '{raw_loc_name}' is not an active delivery hub. Please select a valid campus location.",
+                                )
+                            delivery_location_id = None
+                            delivery_location_name = matched_fallback["name"]
+                        else:
+                            delivery_location_id = matched["id"]
+                            delivery_location_name = matched["name"]
                 else:
                     # Server-defined canonical fallback validation mode
                     raw_loc_name = (order.delivery_location_name or "").strip()

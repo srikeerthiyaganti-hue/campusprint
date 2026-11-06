@@ -300,6 +300,16 @@ export default function AdminDashboard({ onBack }) {
   const [updatingPartnerId, setUpdatingPartnerId] = useState(null)
   const [partnerMigrationNotice, setPartnerMigrationNotice] = useState('')
 
+  useEffect(() => {
+    document.body.classList.add('admin-view-active')
+    const rootEl = document.getElementById('root')
+    if (rootEl) rootEl.classList.add('admin-view-active')
+    return () => {
+      document.body.classList.remove('admin-view-active')
+      if (rootEl) rootEl.classList.remove('admin-view-active')
+    }
+  }, [])
+
   async function login(username, password) {
     const response = await fetch(`${API}/api/admin/login`, {
       method: 'POST',

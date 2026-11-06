@@ -679,14 +679,19 @@ const [isUploading, setIsUploading] = useState(false)
   const [printSides, setPrintSides] = useState('Single-sided')
   const [deliveryMethod, setDeliveryMethod] = useState('pickup')
   const [deliveryLocations, setDeliveryLocations] = useState([
-    { id: null, location_code: 'HOSTEL_A', name: 'Boys Hostel Block A', description: 'Ground floor reception / security desk' },
-    { id: null, location_code: 'HOSTEL_B', name: 'Girls Hostel Block B', description: 'Main gate security checkpoint' },
-    { id: null, location_code: 'LIB_FOYER', name: 'Central Library Foyer', description: 'Library entrance turnstile lobby' },
-    { id: null, location_code: 'ACAD_BLOCK_1', name: 'Academic Block 1', description: 'Main entrance lobby, near stairs' },
-    { id: null, location_code: 'MGMT_BLOCK', name: 'Management Block', description: 'Department reception counter' },
-    { id: null, location_code: 'CANTEEN', name: 'Campus Food Court / Canteen', description: 'Outdoor pickup table' },
+    { id: null, location_code: 'A_BLOCK', name: 'A-block', description: '' },
+    { id: null, location_code: 'H_BLOCK', name: 'H-Block', description: '' },
+    { id: null, location_code: 'N_BLOCK', name: 'N-Block', description: '' },
+    { id: null, location_code: 'U_BLOCK', name: 'U-Block', description: '' },
+    { id: null, location_code: 'MHP', name: 'MHP', description: '' },
+    { id: null, location_code: 'PHARMACY_BLOCK', name: 'Pharmacy Block', description: '' },
+    { id: null, location_code: 'LIBRARY', name: 'Library', description: '' },
+    { id: null, location_code: 'CONVOCATION_HALL', name: 'Convocation hall', description: '' },
+    { id: null, location_code: 'GUEST_HOUSE', name: 'Guest House', description: '' },
+    { id: null, location_code: 'LARA_GATE', name: 'LARA GATE', description: '' },
+    { id: null, location_code: 'UNIVERSITY_GATE', name: 'UNIVERSITY GATE', description: '' },
   ])
-  const [selectedLocationKey, setSelectedLocationKey] = useState('name:Boys Hostel Block A')
+  const [selectedLocationKey, setSelectedLocationKey] = useState('name:A-block')
   const [deliveryRoomDetails, setDeliveryRoomDetails] = useState('')
   const [deliveryTimeWindow, setDeliveryTimeWindow] = useState('Standard (ASAP)')
   const [isSubmitting, setIsSubmitting] = useState(false)
@@ -1234,7 +1239,7 @@ const totalEstimatedPrice = estimatedPrintingCost + deliveryFee
                             : `name:${loc.name}`
                         return (
                           <option key={key} value={key}>
-                            {loc.name} {loc.description ? `— ${loc.description}` : ''}
+                            {loc.name}{loc.description ? ` — ${loc.description}` : ''}
                           </option>
                         )
                       })}

@@ -424,14 +424,28 @@ class TestCampusDeliveryEndpoints(unittest.TestCase):
     # --- GET /api/locations tests ---
 
     def test_locations_returns_canonical_fallback_when_table_missing(self):
-        """When campus_locations table does not exist, returns 6 canonical hubs with source='fallback'."""
+        """When campus_locations table does not exist, returns 11 canonical hubs with source='fallback'."""
         db = MockLaunchBlockerDB(existing_tables={"print_orders"})
         with patch.object(main, "get_db_connection", return_value=MockLaunchBlockerConnection(db)):
             res = get_campus_locations()
 
         self.assertEqual(res["source"], "fallback")
-        self.assertEqual(res["count"], 6)
-        self.assertEqual(len(res["locations"]), 6)
+        self.assertEqual(res["count"], 11)
+        self.assertEqual(len(res["locations"]), 11)
+        expected_names = [
+            "A-block",
+            "H-Block",
+            "N-Block",
+            "U-Block",
+            "MHP",
+            "Pharmacy Block",
+            "Library",
+            "Convocation hall",
+            "Guest House",
+            "LARA GATE",
+            "UNIVERSITY GATE",
+        ]
+        self.assertEqual([loc["name"] for loc in res["locations"]], expected_names)
         for loc in res["locations"]:
             self.assertIsNone(loc["id"])
             self.assertTrue(loc["name"])
@@ -444,7 +458,22 @@ class TestCampusDeliveryEndpoints(unittest.TestCase):
             res = get_campus_locations()
 
         self.assertEqual(res["source"], "fallback")
-        self.assertEqual(res["count"], 6)
+        self.assertEqual(res["count"], 11)
+        self.assertEqual(len(res["locations"]), 11)
+        expected_names = [
+            "A-block",
+            "H-Block",
+            "N-Block",
+            "U-Block",
+            "MHP",
+            "Pharmacy Block",
+            "Library",
+            "Convocation hall",
+            "Guest House",
+            "LARA GATE",
+            "UNIVERSITY GATE",
+        ]
+        self.assertEqual([loc["name"] for loc in res["locations"]], expected_names)
 
     def test_locations_returns_database_records_when_present(self):
         """When campus_locations has active rows, returns database rows with source='database'."""
@@ -637,7 +666,7 @@ class TestCampusDeliveryEndpoints(unittest.TestCase):
             print_type="black_white",
             print_sides="single",
             fulfillment_type="delivery",
-            delivery_location_name="Boys Hostel Block A",
+            delivery_location_name="A-block",
             delivery_room_details="Room 204",
         )
 
@@ -645,7 +674,7 @@ class TestCampusDeliveryEndpoints(unittest.TestCase):
             res = create_order(order, current_student=self.test_student)
 
         self.assertEqual(res["order_id"], 501)
-        self.assertEqual(res["delivery_location_name"], "Boys Hostel Block A")
+        self.assertEqual(res["delivery_location_name"], "A-block")
         self.assertEqual(res["delivery_room_details"], "Room 204")
         self.assertEqual(res["delivery_fee"], 5.00)
 
@@ -653,7 +682,7 @@ class TestCampusDeliveryEndpoints(unittest.TestCase):
         order_insert = next(q for q in db.executed_queries if "INSERT INTO print_orders" in q["query"])
         params = order_insert["params"]
         self.assertIsNone(params[9])  # delivery_location_id
-        self.assertEqual(params[10], "Boys Hostel Block A")
+        self.assertEqual(params[10], "A-block")
         self.assertEqual(params[11], "Room 204")
 
     def test_delivery_fallback_mode_arbitrary_untrusted_name_rejected(self):
